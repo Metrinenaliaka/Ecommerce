@@ -2,6 +2,7 @@ const {Category} = require('../models/category');
 const express = require('express');
 const router = express.Router();
 
+// get the list of categories
 router.get(`/`, async (req, res) =>{
     const categoryList = await Category.find();
 
@@ -11,6 +12,7 @@ router.get(`/`, async (req, res) =>{
     res.status(200).send(categoryList);
 })
 
+// get category by id
 router.get('/:id', async(req,res)=>{
     const category = await Category.findById(req.params.id);
 
@@ -21,7 +23,7 @@ router.get('/:id', async(req,res)=>{
 })
 
 
-
+// post a new category
 router.post('/', async (req,res)=>{
     let category = new Category({
         name: req.body.name,
@@ -36,7 +38,7 @@ router.post('/', async (req,res)=>{
     res.send(category);
 })
 
-
+// update a category by id
 router.put('/:id',async (req, res)=> {
     const category = await Category.findByIdAndUpdate(
         req.params.id,
@@ -45,7 +47,7 @@ router.put('/:id',async (req, res)=> {
             icon: req.body.icon || category.icon,
             color: req.body.color,
         },
-        { new: true}
+        { new: true} // ensures new updated data is returned
     )
 
     if(!category)
@@ -54,8 +56,9 @@ router.put('/:id',async (req, res)=> {
     res.send(category);
 })
 
+// delete a category by id
 router.delete('/:id', (req, res)=>{
-    Category.findByIdAndRemove(req.params.id).then(category =>{
+    Category.findByIdAndDelete(req.params.id).then(category =>{
         if(category) {
             return res.status(200).json({success: true, message: 'the category is deleted!'})
         } else {

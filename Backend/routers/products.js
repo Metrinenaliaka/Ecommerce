@@ -31,9 +31,10 @@ const storage = multer.diskStorage({
   
 const uploadOptions = multer({ storage: storage })
 
+// get the list of products plus the category
 router.get(`/`, async (req, res) =>{
     let filter = {};
-    if(req.query.categories)
+    if(req.query.categories) // filtering by category
     {
          filter = {category: req.query.categories.split(',')}
     }
@@ -46,6 +47,7 @@ router.get(`/`, async (req, res) =>{
     res.send(productList);
 })
 
+// get products by ID plus the category 
 router.get(`/:id`, async (req, res) =>{
     const product = await Product.findById(req.params.id).populate('category');
 
@@ -55,6 +57,7 @@ router.get(`/:id`, async (req, res) =>{
     res.send(product);
 })
 
+// uploading products
 router.post(`/`, uploadOptions.single('image'), async (req, res) =>{
     const category = await Category.findById(req.body.category);
     if(!category) return res.status(400).send('Invalid Category')
@@ -86,8 +89,9 @@ router.post(`/`, uploadOptions.single('image'), async (req, res) =>{
     res.send(product);
 })
 
+// updating product information
 router.put('/:id',async (req, res)=> {
-    if(!mongoose.isValidObjectId(req.params.id)) {
+    if(!mongoose.isValidObjectId(req.params.id)) { // validate object id
        return res.status(400).send('Invalid Product Id')
     }
     const category = await Category.findById(req.body.category);
@@ -108,7 +112,7 @@ router.put('/:id',async (req, res)=> {
             numReviews: req.body.numReviews,
             isFeatured: req.body.isFeatured,
         },
-        { new: true}
+        { new: true} // makes sure the updated data is returned
     )
 
     if(!product)
@@ -117,8 +121,9 @@ router.put('/:id',async (req, res)=> {
     res.send(product);
 })
 
+// deleting a product
 router.delete('/:id', (req, res)=>{
-    Product.findByIdAndRemove(req.params.id).then(product =>{
+    Product.findByIdAndDelete(req.params.id).then(product =>{
         if(product) {
             return res.status(200).json({success: true, message: 'the product is deleted!'})
         } else {
@@ -129,17 +134,24 @@ router.delete('/:id', (req, res)=>{
     })
 })
 
-router.get(`/get/count`, async (req, res) =>{
-    const productCount = await Product.countDocuments((count) => count)
+// returns the number of products
+router.get(`/get/count`, async (req, res) => {
+    try {
+        const productCount = await Product.countDocuments();  // No callback needed
 
-    if(!productCount) {
-        res.status(500).json({success: false})
-    } 
-    res.send({
-        productCount: productCount
-    });
-})
+        if (!productCount) {
+            return res.status(500).json({ success: false });
+        }
 
+        res.send({
+            productCount: productCount
+        });
+    } catch (err) {
+        res.status(500).json({ success: false, error: err.message });
+    }
+});
+
+// get featured products to be displayed on the home page
 router.get(`/get/featured/:count`, async (req, res) =>{
     const count = req.params.count ? req.params.count : 0
     const products = await Product.find({isFeatured: true}).limit(+count);

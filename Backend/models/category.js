@@ -15,11 +15,11 @@ const categorySchema = mongoose.Schema({
 
 
 categorySchema.virtual('id').get(function () {
-    return this._id.toHexString();
+    return this._id.toHexString(); // convert the object id to string
 });
 
 categorySchema.set('toJSON', {
-    virtuals: true,
+    virtuals: true, // enable virtuals for frontend
 });
 
 exports.Category = mongoose.model('Category', categorySchema);
