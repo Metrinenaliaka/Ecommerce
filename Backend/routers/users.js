@@ -4,6 +4,7 @@ const router = express.Router();
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
+// get all users
 router.get(`/`, async (req, res) =>{
     const userList = await User.find().select('-passwordHash');
 
@@ -13,6 +14,7 @@ router.get(`/`, async (req, res) =>{
     res.send(userList);
 })
 
+// get user by id
 router.get('/:id', async(req,res)=>{
     const user = await User.findById(req.params.id).select('-passwordHash');
 
@@ -22,11 +24,12 @@ router.get('/:id', async(req,res)=>{
     res.status(200).send(user);
 })
 
+// create new user
 router.post('/', async (req,res)=>{
     let user = new User({
         name: req.body.name,
         email: req.body.email,
-        passwordHash: bcrypt.hashSync(req.body.password, 10),
+        passwordHash: bcrypt.hashSync(req.body.password, 11),
         phone: req.body.phone,
         isAdmin: req.body.isAdmin,
         street: req.body.street,
@@ -43,6 +46,7 @@ router.post('/', async (req,res)=>{
     res.send(user);
 })
 
+// update user
 router.put('/:id',async (req, res)=> {
 
     const userExist = await User.findById(req.params.id);
@@ -76,6 +80,7 @@ router.put('/:id',async (req, res)=> {
     res.send(user);
 })
 
+// login user
 router.post('/login', async (req,res) => {
     const user = await User.findOne({email: req.body.email})
     const secret = process.env.secret;
@@ -101,7 +106,7 @@ router.post('/login', async (req,res) => {
     
 })
 
-
+// register user
 router.post('/register', async (req,res)=>{
     let user = new User({
         name: req.body.name,
@@ -123,7 +128,7 @@ router.post('/register', async (req,res)=>{
     res.send(user);
 })
 
-
+// delete user
 router.delete('/:id', (req, res)=>{
     User.findByIdAndRemove(req.params.id).then(user =>{
         if(user) {
@@ -136,6 +141,7 @@ router.delete('/:id', (req, res)=>{
     })
 })
 
+// get user count
 router.get(`/get/count`, async (req, res) =>{
     const userCount = await User.countDocuments((count) => count)
 
