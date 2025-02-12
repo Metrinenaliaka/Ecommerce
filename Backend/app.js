@@ -6,7 +6,8 @@ const app = express();
 const cors = require('cors');
 const authJwt = require('./helpers/jwt');
 const errorHandler = require('./helpers/error-handler');
-require('dotenv/config');
+require('dotenv').config();
+
 
 app.use(cors());
 app.options('*', cors());
@@ -16,6 +17,7 @@ app.use(bodyParser.json());
 app.use(morgan('tiny')); // used to log api requests to the console
 app.use(authJwt()); // used to authenticate the user
 app.use(errorHandler);
+app.use('/public/uploads', express.static(__dirname + '/public/uploads'));
 
 
 

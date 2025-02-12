@@ -66,11 +66,11 @@ Order Example:
     "orderItems" : [
         {
             "quantity": 3,
-            "product" : "5fcfc406ae79b0a6a90d2585"
+            "product" : "67a4d4b2ba24db39faf45baf"
         },
         {
             "quantity": 2,
-            "product" : "5fd293c7d3abe7295b1403c4"
+            "product" : "67a4a27400f25706b613d7a0"
         }
     ],
     "shippingAddress1" : "Flowers Street , 45",
@@ -79,7 +79,7 @@ Order Example:
     "zip": "00000",
     "country": "Czech Republic",
     "phone": "+420702241333",
-    "user": "5fd51bc7e39ba856244a3b44"
+    "user": "67a4ee82202c262da123dc83"
 }
 
  */

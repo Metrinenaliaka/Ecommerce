@@ -85,10 +85,10 @@ router.put('/:id',async (req, res)=> {
 
 
 router.delete('/:id', (req, res)=>{
-    Order.findByIdAndRemove(req.params.id).then(async order =>{
+    Order.findByIdAndDelete(req.params.id).then(async order =>{
         if(order) {
             await order.orderItems.map(async orderItem => {
-                await OrderItem.findByIdAndRemove(orderItem)
+                await OrderItem.findByIdAndDelete(orderItem)
             })
             return res.status(200).json({success: true, message: 'the order is deleted!'})
         } else {
@@ -111,17 +111,19 @@ router.get('/get/totalsales', async (req, res)=> {
     res.send({totalsales: totalSales.pop().totalsales})
 })
 
-router.get(`/get/count`, async (req, res) =>{
-    const orderCount = await Order.countDocuments((count) => count)
+router.get(`/get/count`, async (req, res) => {
+    try {
+        const orderCount = await Order.countDocuments();
+        res.send({
+            orderCount: orderCount
+        });
+    } catch (err) {
+        res.status(500).json({ success: false, error: err });
+    }
+});
 
-    if(!orderCount) {
-        res.status(500).json({success: false})
-    } 
-    res.send({
-        orderCount: orderCount
-    });
-})
 
+// get users orders by Id
 router.get(`/get/userorders/:userid`, async (req, res) =>{
     const userOrderList = await Order.find({user: req.params.userid}).populate({ 
         path: 'orderItems', populate: {
