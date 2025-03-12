@@ -33,6 +33,8 @@ function authJwt() {
                 console.error("JWT Middleware Error:", err);
                 return res.status(401).json({ message: "Unauthorized", error: err.message });
             }
+            console.log("Authenticated User Payload:", req.auth);
+            req.user = req.auth;
 
             console.log("Authenticated User:", req.user);
 
